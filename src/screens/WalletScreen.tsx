@@ -285,8 +285,7 @@ export function WalletScreen() {
           <Text style={styles.totalLabel}>Total Balance</Text>
           <Text style={styles.totalAmount}>₱ {formatAmount(totalBalance)}</Text>
           <View style={styles.totalFooter}>
-            <Icon name="lock" size={14} color={palette.surface} />
-            <Text style={styles.totalFooterText}>Stored offline · never shared</Text>
+            <Text style={styles.totalFooterText}>All Savings</Text>
           </View>
         </View>
 

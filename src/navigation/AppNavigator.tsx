@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -11,6 +11,7 @@ import {SecurityScreen} from '../screens/SecurityScreen';
 import {RecalibrateScreen} from '../screens/RecalibrateScreen';
 
 import {palette, typography} from '../tokens';
+import {useWalletStore} from '../store/useWalletStore';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -57,9 +58,26 @@ function TabNavigator() {
 }
 
 export function AppNavigator() {
+  // Grab the initialization status and the saved name
+  const isInitialized = useWalletStore((state) => state.isInitialized);
+  const userName = useWalletStore((state) => state.userName);
+  const initializeWallet = useWalletStore((state) => state.initialize);
+
+  useEffect(() => {
+    initializeWallet();
+  }, [initializeWallet]);
+
+  // Wait for SQLite to load before rendering the screens to avoid flashing the wrong screen
+  if (!isInitialized) {
+    return null;
+  }
+
   return (
-    // Set initialRouteName to "Welcome" so it loads first
-    <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Welcome">
+    <Stack.Navigator
+      screenOptions={{headerShown: false}}
+      // If there is a name in the DB, skip straight to Home!
+      initialRouteName={userName ? 'MainTabs' : 'Welcome'}
+    >
       <Stack.Screen name="Welcome" component={WelcomeScreen} />
       <Stack.Screen name="MainTabs" component={TabNavigator} />
       <Stack.Screen

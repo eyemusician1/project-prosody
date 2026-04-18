@@ -2,25 +2,21 @@ import React from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { palette, spacing, typography } from '../tokens';
-
-// Dummy data showing what the AI has recently blocked
-const BLOCKED_THREATS = [
-  { id: '1', title: 'Suspicious Link Blocked', sender: 'Unknown Number', time: '10:42 AM' },
-  { id: '2', title: 'Fake Bank Alert', sender: 'BDO-Notice', time: 'Yesterday' },
-  { id: '3', title: 'Delivery Scam', sender: 'Package-Alert', time: 'Mon, 2:15 PM' },
-];
+import { useWalletStore } from '../store/useWalletStore'; // Import Store
 
 export function SecurityScreen() {
+  // Safe selectors — fall back gracefully if the store slice isn't defined yet
+  const logs = useWalletStore((state) => state.securityLogs ?? []);
+  const clearLogs = useWalletStore((state) => state.clearLogs ?? (() => {}));
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-        {/* 1. Page Header */}
         <View style={styles.header}>
           <Text style={styles.headerText}>Security Shield</Text>
         </View>
 
-        {/* 2. Simple Background Status Card */}
         <View style={styles.statusCard}>
           <View style={styles.statusHeader}>
             <Icon name="security" size={32} color={palette.primary} />
@@ -29,9 +25,7 @@ export function SecurityScreen() {
               <Text style={styles.statusSubtitle}>Silently checking incoming messages</Text>
             </View>
           </View>
-
           <View style={styles.divider} />
-
           <View style={styles.telemetryRow}>
             <View style={styles.telemetryItem}>
               <Text style={styles.telemetryLabel}>Device Temp</Text>
@@ -44,34 +38,37 @@ export function SecurityScreen() {
           </View>
         </View>
 
-        {/* 3. Threat Log (What was blocked) */}
         <View style={styles.logHeader}>
           <Text style={styles.sectionTitle}>Recent Blocks</Text>
-          <TouchableOpacity activeOpacity={0.6}>
-            <Text style={styles.clearText}>Clear History</Text>
-          </TouchableOpacity>
+          {logs.length > 0 && (
+            <TouchableOpacity activeOpacity={0.6} onPress={clearLogs}>
+              <Text style={styles.clearText}>Clear History</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <View style={styles.logList}>
-          {BLOCKED_THREATS.map((log) => (
-            <View key={log.id} style={styles.logItem}>
-              <View style={styles.iconWrapper}>
-                <Icon name="gpp-bad" size={24} color={palette.muted} />
-              </View>
-
-              <View style={styles.logDetails}>
-                <Text style={styles.logTitle}>{log.title}</Text>
-                <Text style={styles.logSender}>{log.sender}</Text>
-              </View>
-
-              <Text style={styles.logTime}>{log.time}</Text>
+          {logs.length === 0 ? (
+            <View style={styles.emptyLogs}>
+              <Text style={styles.emptyLogsText}>No threats detected yet.</Text>
             </View>
-          ))}
+          ) : (
+            logs.map((log) => (
+              <View key={log.id} style={styles.logItem}>
+                <View style={styles.iconWrapper}>
+                  <Icon name="gpp-bad" size={24} color={palette.muted} />
+                </View>
+                <View style={styles.logDetails}>
+                  <Text style={styles.logTitle}>{log.title}</Text>
+                  <Text style={styles.logSender}>{log.sender}</Text>
+                </View>
+                <Text style={styles.logTime}>{log.time}</Text>
+              </View>
+            ))
+          )}
         </View>
-
       </ScrollView>
 
-      {/* 4. Large, User-Friendly Action Button */}
       <View style={styles.footerContainer}>
         <TouchableOpacity style={styles.buttonPrimary} activeOpacity={0.8}>
           <Icon name="update" size={28} color={palette.surface} />
@@ -81,7 +78,6 @@ export function SecurityScreen() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -182,6 +178,15 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     padding: spacing.md,
     elevation: 1,
+  },
+  emptyLogs: {
+    paddingVertical: spacing.xl,
+    alignItems: 'center',
+  },
+  emptyLogsText: {
+    color: palette.muted,
+    fontSize: 14,
+    fontFamily: typography.primaryRegular,
   },
   logItem: {
     flexDirection: 'row',

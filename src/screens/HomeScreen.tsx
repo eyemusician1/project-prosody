@@ -2,14 +2,21 @@ import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { palette, spacing, typography } from '../tokens';
+import { useWalletStore } from '../store/useWalletStore';
 
 export function HomeScreen() {
+  // Read the user's name from the global Zustand store
+  const userName = useWalletStore((state) => state.userName);
+
   return (
     <View style={styles.container}>
       {/* 1. Friendly Status Header */}
       <View style={styles.header}>
         <Icon name="verified-user" size={24} color={palette.primary} />
-        <Text style={styles.headerText}>Your phone is secure</Text>
+        {/* Dynamically insert the name, falling back to "Your" if empty */}
+        <Text style={styles.headerText}>
+          {userName ? `${userName}'s` : 'Your'} phone is secure
+        </Text>
       </View>
 
       {/* 2. The "Privacy Pulse" Orb */}
@@ -19,7 +26,6 @@ export function HomeScreen() {
             <Icon name="memory" size={56} color={palette.surface} />
           </View>
         </View>
-        {/* Simplified, easy-to-read device health */}
         <Text style={styles.telemetryText}>AI is active  •  Phone is cool</Text>
         <Text style={styles.subTelemetryText}>0 scams blocked today</Text>
       </View>
@@ -111,7 +117,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 20,
-    borderRadius: 32, // Increased from 24 for softer, rounder edges
+    borderRadius: 32, // Soft, rounded pill shape
     gap: spacing.md,
     elevation: 2,
   },
@@ -128,7 +134,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 20,
-    borderRadius: 32, // Increased from 24 for softer, rounder edges
+    borderRadius: 32, // Soft, rounded pill shape
     gap: spacing.md,
   },
   buttonTextSecondary: {
