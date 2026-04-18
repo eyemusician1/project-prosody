@@ -3,7 +3,8 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-// Importing the proper function names
+// Importing all screen functions
+import {WelcomeScreen} from '../screens/WelcomeScreen';
 import {HomeScreen} from '../screens/HomeScreen';
 import {WalletScreen} from '../screens/WalletScreen';
 import {SecurityScreen} from '../screens/SecurityScreen';
@@ -57,7 +58,9 @@ function TabNavigator() {
 
 export function AppNavigator() {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    // Set initialRouteName to "Welcome" so it loads first
+    <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Welcome">
+      <Stack.Screen name="Welcome" component={WelcomeScreen} />
       <Stack.Screen name="MainTabs" component={TabNavigator} />
       <Stack.Screen
         name="Recalibrate"

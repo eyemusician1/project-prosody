@@ -9,22 +9,22 @@ import {
   Platform
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useNavigation } from '@react-navigation/native';
 import { palette, spacing, typography } from '../tokens';
 
 export function WelcomeScreen() {
   const [name, setName] = useState('');
+  const navigation = useNavigation<any>();
+
+  const handleContinue = () => {
+    navigation.replace('MainTabs');
+  };
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={styles.header}>
-        <View style={styles.iconContainer}>
-          <Icon name="waving-hand" size={28} color={palette.secondary} />
-        </View>
-      </View>
-
       <View style={styles.content}>
         <Text style={styles.title}>What should we call you?</Text>
         <Text style={styles.subtitle}>
@@ -33,7 +33,7 @@ export function WelcomeScreen() {
 
         <TextInput
           style={styles.input}
-          placeholder="e.g. Cire"
+          placeholder="e.g. Sayr"
           placeholderTextColor={palette.muted}
           value={name}
           onChangeText={setName}
@@ -48,13 +48,14 @@ export function WelcomeScreen() {
           style={[styles.button, !name.trim() && styles.buttonDisabled]}
           disabled={!name.trim()}
           activeOpacity={0.8}
+          onPress={handleContinue}
         >
           <Text style={[styles.buttonText, !name.trim() && styles.buttonTextDisabled]}>
             Continue
           </Text>
           <Icon
             name="arrow-forward"
-            size={20}
+            size={24}
             color={!name.trim() ? palette.muted : palette.surface}
           />
         </TouchableOpacity>
@@ -68,31 +69,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: palette.bg,
   },
-  header: {
-    paddingTop: 80,
-    paddingHorizontal: spacing.xl,
-    alignItems: 'flex-start',
-  },
-  iconContainer: {
-    backgroundColor: palette.surface,
-    padding: spacing.md,
-    borderRadius: 100, // Makes it a perfect circle
-    elevation: 2, // Subtle MD3 shadow for Android
-    shadowColor: palette.ink,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-  },
   content: {
     flex: 1,
     paddingHorizontal: spacing.xl,
-    paddingTop: spacing.xxl,
+    paddingTop: 140,
   },
   title: {
     color: palette.ink,
-    fontSize: 34,
+    fontSize: 36,
     fontFamily: typography.primaryBold,
-    lineHeight: 42,
+    lineHeight: 44,
     marginBottom: spacing.sm,
   },
   subtitle: {
@@ -103,26 +89,27 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xxxl,
   },
   input: {
-    fontSize: 28,
+    fontSize: 32,
     color: palette.ink,
     borderBottomWidth: 2,
     borderBottomColor: palette.primary,
     paddingVertical: spacing.md,
-    fontFamily: typography.primaryMedium,
+    fontFamily: typography.primaryBold,
   },
   footer: {
     paddingHorizontal: spacing.xl,
     paddingBottom: Platform.OS === 'ios' ? 40 : spacing.xxxl,
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-end', // Pushes the button to the bottom right
+    width: '100%',
   },
   button: {
     backgroundColor: palette.primary,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 28,
-    borderRadius: 100,
+    paddingVertical: 18,
+    paddingHorizontal: 32, // Gives the button a distinct pill shape without stretching it
+    borderRadius: 32,
     gap: spacing.sm,
     elevation: 4,
     shadowColor: palette.primary,
@@ -137,8 +124,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: palette.surface,
-    fontSize: 16,
-    fontFamily: typography.primaryMedium,
+    fontSize: 18,
+    fontFamily: typography.primaryBold,
   },
   buttonTextDisabled: {
     color: palette.muted,
