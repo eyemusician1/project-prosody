@@ -11,12 +11,15 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import { palette, spacing, typography } from '../tokens';
+import { useWalletStore } from '../store/useWalletStore';
 
 export function WelcomeScreen() {
   const [name, setName] = useState('');
   const navigation = useNavigation<any>();
+  const setUserName = useWalletStore((state) => state.setUserName);
 
   const handleContinue = () => {
+    setUserName(name.trim()); // Persists to SQLite — next launch skips Welcome
     navigation.replace('MainTabs');
   };
 

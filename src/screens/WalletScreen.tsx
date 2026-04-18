@@ -327,8 +327,20 @@ export function WalletScreen() {
             </Animated.View>
           );
         })}
+        {/* Mic FAB — animates in above the + when FAB is open */}
+        {(() => {
+          const micTranslateY = fabAnim.interpolate({ inputRange: [0, 1], outputRange: [16, 0] });
+          const micOpacity    = fabAnim.interpolate({ inputRange: [0, 0.4], outputRange: [0, 1], extrapolate: 'clamp' });
+          return (
+            <Animated.View style={[{ opacity: micOpacity, transform: [{ translateY: micTranslateY }] }, !fabOpen && styles.fabItemHidden]} pointerEvents={fabOpen ? 'auto' : 'none'}>
+              <TouchableOpacity style={styles.fabMic} activeOpacity={0.85} onPress={() => { /* TODO: wire mic action */ }}>
+                <Icon name="mic" size={26} color={palette.primary} />
+              </TouchableOpacity>
+            </Animated.View>
+          );
+        })()}
         <TouchableOpacity style={styles.fab} activeOpacity={0.85} onPress={toggleFab}>
-          <Animated.View style={{ transform: [{ rotate: fabRotate }] }}><Icon name="add" size={36} color={palette.surface} /></Animated.View>
+          <Animated.View style={{ transform: [{ rotate: fabRotate }] }}><Icon name="add" size={40} color={palette.surface} /></Animated.View>
         </TouchableOpacity>
       </Animated.View>
 
@@ -515,7 +527,8 @@ const styles = StyleSheet.create({
   fabLabel: { backgroundColor: palette.surface, paddingVertical: spacing.sm, paddingHorizontal: spacing.lg, borderRadius: 20, elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 4 },
   fabLabelText: { color: palette.ink, fontSize: 14, fontFamily: typography.primaryMedium },
   fabMiniBtn: { width: 48, height: 48, borderRadius: 24, backgroundColor: palette.primary, alignItems: 'center', justifyContent: 'center', elevation: 4, shadowColor: palette.primary, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.3, shadowRadius: 4 },
-  fab: { width: 64, height: 64, borderRadius: 32, backgroundColor: palette.primary, alignItems: 'center', justifyContent: 'center', elevation: 6, shadowColor: palette.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.35, shadowRadius: 8, marginTop: spacing.sm },
+  fab: { width: 68, height: 68, borderRadius: 34, backgroundColor: palette.primary, alignItems: 'center', justifyContent: 'center', elevation: 6, shadowColor: palette.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.35, shadowRadius: 8, marginTop: spacing.sm },
+  fabMic: { width: 52, height: 52, borderRadius: 26, backgroundColor: palette.surface, alignItems: 'center', justifyContent: 'center', elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.12, shadowRadius: 6, borderWidth: 1, borderColor: palette.border },
 
   // Bottom Sheet Modal
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' },
